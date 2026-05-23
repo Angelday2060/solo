@@ -1,0 +1,28 @@
+{
+  "name": "solo",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Angelday <3063508819@qq.com>",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.6",
+    "vite": "^5.4.11",
+    "vue-tsc": "^2.2.12"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "chart.js": "4.4",
+    "naive-ui": "2.41",
+    "vue": "3.5",
+    "vue-router": "^4.6.4"
+  }
+}

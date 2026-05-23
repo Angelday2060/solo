@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>solo — 产品原型</title>
+  <link rel="stylesheet" href="common.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">solo</div>
+      <nav class="nav">
+        <button type="button" class="nav-item" data-view="diary">日记</button>
+        <div class="nav-ledger-group" id="nav-ledger-group">
+          <button type="button" class="nav-ledger-toggle" id="nav-ledger-toggle" aria-expanded="false" aria-controls="nav-ledger-subnav">
+            <span class="nav-ledger-chevron" aria-hidden="true"></span>
+            <span class="nav-ledger-title">记账</span>
+          </button>
+          <div id="nav-ledger-subnav" class="nav-ledger-children" role="group" aria-label="记账子页面">
+            <button type="button" class="nav-item nav-subitem" data-view="ledger-stat">统计视图</button>
+            <button type="button" class="nav-item nav-subitem" data-view="ledger-list">账单列表</button>
+            <button type="button" class="nav-item nav-subitem" data-view="ledger-detail">新增账单</button>
+          </div>
+        </div>
+        <button type="button" class="nav-item" data-view="notes">笔记</button>
+        <button type="button" class="nav-item" data-view="schedule">日程</button>
+      </nav>
+    </aside>
+    <div class="main">
+      <div class="workspace">
+        <div class="content-view" data-view="diary">
+          <div class="layout-diary">
+            <div class="panel date-list">
+              <div class="panel-h">时间轴 · 年 / 月 / 日</div>
+              <div class="panel-body diary-tree-panel-body">
+                <div class="diary-tree-toolbar">
+                  <button type="button" id="diary-btn-new" class="btn btn-sm">新建日记</button>
+                  <span class="diary-toolbar-hint" title="实现侧写入 DiaryEntry">今日草稿 · 可与已有条目同日多篇</span>
+                </div>
+                <div id="diary-tree-root" class="diary-tree" role="tree" aria-label="日记日期树"></div>
+              </div>
+            </div>
+            <div class="panel editor-main">
+              <div class="panel-h">正文区 · <span id="diary-editor-date-label" class="diary-editor-date-label">—</span></div>
+              <div class="panel-body">
+                <div class="placeholder">编辑区 · 自动记录创建/修改时间</div>
+              </div>
+            </div>
+            <div class="meta-col">
+              <div class="panel">
+                <div class="panel-h">元数据 · 日期 / 天气 / 心情</div>
+                <div class="panel-body diary-meta-body">
+                  <p class="diary-meta-hint">是否在编辑区展示以上字段，可在「设置」中逐项开关（原型仅示意）。</p>
+                  <div class="diary-meta-field">
+                    <label class="diary-meta-label" for="diary-meta-date">日期</label>
+                    <input id="diary-meta-date" class="diary-meta-control" type="date" aria-label="日记日期" />
+                  </div>
+                  <div class="diary-meta-field">
+                    <label class="diary-meta-label" for="diary-meta-weather">天气</label>
+                    <select id="diary-meta-weather" class="diary-meta-control" aria-label="天气">
+                      <option value="">未填</option>
+                      <option value="sunny">晴</option>
+                      <option value="cloudy">多云</option>
+                      <option value="overcast">阴</option>
+                      <option value="rain">雨</option>
+                      <option value="snow">雪</option>
+                      <option value="fog">雾</option>
+                      <option value="wind">大风</option>
+                    </select>
+                  </div>
+                  <div class="diary-meta-field">
+                    <label class="diary-meta-label" for="diary-meta-mood">心情</label>
+                    <select id="diary-meta-mood" class="diary-meta-control" aria-label="心情">
+                      <option value="">未填</option>
+                      <option value="calm">平和</option>
+                      <option value="happy">愉快</option>
+                      <option value="low">低落</option>
+                      <option value="anxious">焦虑</option>
+                      <option value="excited">兴奋</option>
+                      <option value="tired">疲惫</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="ledger-stat">
+          <div class="layout-ledger">
+            <div class="ledger-stat-preview">
+              <div class="panel stat-filters">
+                <div class="panel-h">筛选 · 统计口径</div>
+                <div class="panel-body stat-filters-body">
+                  <div class="stat-filter-row">
+                    <span class="stat-filter-label">时间范围</span>
+                    <select class="stat-filter-control" aria-label="时间范围">
+                      <option value="week">本周</option>
+                      <option value="month" selected>本月</option>
+                      <option value="year">本年</option>
+                      <option value="custom">自定义</option>
+                    </select>
+                    <span class="stat-filter-label">自定义起止</span>
+                    <input class="stat-filter-date" type="date" aria-label="开始日期" />
+                    <span class="stat-filter-sep">—</span>
+                    <input class="stat-filter-date" type="date" aria-label="结束日期" />
+                  </div>
+                  <div class="stat-filter-row">
+                    <span class="stat-filter-label">收支</span>
+                    <select class="stat-filter-control" aria-label="收支">
+                      <option value="all" selected>全部</option>
+                      <option value="in">仅收入</option>
+                      <option value="out">仅支出</option>
+                    </select>
+                    <span class="stat-filter-label">分类</span>
+                    <select id="stat-filter-category" class="stat-filter-control" aria-label="分类">
+                      <option value="all" selected>全部分类</option>
+                      <option value="ex1餐饮">餐饮（示例）</option>
+                      <option value="ex2交通">交通（示例）</option>
+                    </select>
+                    <span class="stat-filter-label">币种</span>
+                    <select class="stat-filter-control" aria-label="币种">
+                      <option value="cny" selected>人民币（CNY）</option>
+                      <option value="jpy">日元（JPY）</option>
+                    </select>
+                    <button type="button" class="btn" style="margin-left:4px;">应用</button>
+                  </div>
+                  <p class="ledger-field-note">折线图仅展示按日支出；日序列仍受「收支」筛选。分类图在「全部」口径下按支出累计。四张汇总卡片在实现中为数据库按日/周/月/年聚合。币种仅 CNY/JPY。</p>
+                </div>
+              </div>
+              <div class="ledger-summary">
+                <div class="panel"><div class="panel-h">日汇总</div><div class="panel-body"><div class="placeholder">占位</div></div></div>
+                <div class="panel"><div class="panel-h">周汇总</div><div class="panel-body"><div class="placeholder">占位</div></div></div>
+                <div class="panel"><div class="panel-h">月汇总</div><div class="panel-body"><div class="placeholder">占位</div></div></div>
+                <div class="panel"><div class="panel-h">年汇总</div><div class="panel-body"><div class="placeholder">占位</div></div></div>
+              </div>
+              <div class="stat-charts">
+                <div class="stat-chart-panel">
+              <div class="panel-h">每日支出 · 折线图（当前所选币种）</div>
+                  <div class="panel-body panel-body--chart">
+                    <canvas id="chart-daily-spend" aria-label="每日支出折线图"></canvas>
+                  </div>
+                </div>
+                <div class="stat-charts-row">
+                  <div class="stat-chart-panel">
+                    <div class="panel-h">分类排行 · 柱状图</div>
+                    <div class="panel-body panel-body--chart">
+                      <canvas id="chart-top5-bar" aria-label="消费前五柱状图"></canvas>
+                    </div>
+                  </div>
+                  <div class="stat-chart-panel">
+                    <div class="panel-h">消费分类占比 · 饼图</div>
+                    <div class="panel-body panel-body--chart">
+                      <canvas id="chart-category-pie" aria-label="分类占比饼图"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="ledger-list">
+          <div class="layout-ledger">
+            <div class="ledger-table-root panel ledger-table">
+              <div class="panel-h">流水列表 · 币种 CNY/JPY · 检索与筛选在表格上方 · 新建在「新增账单」或使用下方「新建」</div>
+              <div class="panel-body">
+                <div class="ledger-list-filters">
+                  <input type="search" class="field-control ledger-filter-search" placeholder="备注或金额关键字" aria-label="搜索" />
+                  <input type="date" class="field-control ledger-filter-date" aria-label="起始日" />
+                  <span class="ledger-filter-sep">—</span>
+                  <input type="date" class="field-control ledger-filter-date" aria-label="结束日" />
+                  <select class="field-control ledger-filter-select" aria-label="方向">
+                    <option value="all" selected>全部方向</option>
+                    <option value="out">支出</option>
+                    <option value="in">收入</option>
+                  </select>
+                  <select class="field-control ledger-filter-select" aria-label="分类">
+                    <option value="all" selected>全部分类</option>
+                    <option value="ex1餐饮">餐饮（示例）</option>
+                    <option value="ex2交通">交通（示例）</option>
+                  </select>
+                  <select class="field-control ledger-filter-select" aria-label="币种">
+                    <option value="all" selected>全部币种</option>
+                    <option value="cny">CNY</option>
+                    <option value="jpy">JPY</option>
+                  </select>
+                  <button type="button" class="btn btn-sm" id="ledger-filter-apply">检索</button>
+                  <button type="button" class="btn btn-sm" id="ledger-btn-new">新建</button>
+                </div>
+                <div class="ledger-list-toolbar">
+                  <button type="button" class="btn" id="ledger-batch-delete">删除所选</button>
+                  <p class="ledger-field-note ledger-list-toolbar-hint">勾选后可批量删除；编辑跳转「记账 · 新增账单」。</p>
+                </div>
+                <table class="ledger">
+                  <thead>
+                    <tr>
+                      <th class="ledger-col-check"><input type="checkbox" id="ledger-select-all" aria-label="全选本页" /></th>
+                      <th>金额</th>
+                      <th>币种</th>
+                      <th>方向</th>
+                      <th>分类</th>
+                      <th>发生日</th>
+                      <th>备注</th>
+                      <th class="ledger-col-actions">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ledger-tbody">
+                    <tr data-id="demo-1">
+                      <td class="ledger-col-check"><input type="checkbox" class="ledger-row-check" data-id="demo-1" aria-label="选择 demo-1" /></td>
+                      <td>88.00</td>
+                      <td>CNY</td>
+                      <td>支出</td>
+                      <td>餐饮（示例）</td>
+                      <td>2026-05-12</td>
+                      <td>便利店</td>
+                      <td class="ledger-col-actions">
+                        <button type="button" class="btn btn-sm ledger-btn-edit" data-id="demo-1">编辑</button>
+                        <button type="button" class="btn btn-sm btn-danger ledger-btn-del" data-id="demo-1">删除</button>
+                      </td>
+                    </tr>
+                    <tr data-id="demo-2">
+                      <td class="ledger-col-check"><input type="checkbox" class="ledger-row-check" data-id="demo-2" aria-label="选择 demo-2" /></td>
+                      <td>1200.00</td>
+                      <td>CNY</td>
+                      <td>收入</td>
+                      <td>—</td>
+                      <td>2026-05-08</td>
+                      <td>工资</td>
+                      <td class="ledger-col-actions">
+                        <button type="button" class="btn btn-sm ledger-btn-edit" data-id="demo-2">编辑</button>
+                        <button type="button" class="btn btn-sm btn-danger ledger-btn-del" data-id="demo-2">删除</button>
+                      </td>
+                    </tr>
+                    <tr data-id="demo-3">
+                      <td class="ledger-col-check"><input type="checkbox" class="ledger-row-check" data-id="demo-3" aria-label="选择 demo-3" /></td>
+                      <td>350</td>
+                      <td>JPY</td>
+                      <td>支出</td>
+                      <td>交通（示例）</td>
+                      <td>2026-05-14</td>
+                      <td>Suica</td>
+                      <td class="ledger-col-actions">
+                        <button type="button" class="btn btn-sm ledger-btn-edit" data-id="demo-3">编辑</button>
+                        <button type="button" class="btn btn-sm btn-danger ledger-btn-del" data-id="demo-3">删除</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="ledger-detail">
+          <div class="layout-ledger">
+            <div class="ledger-detail-root panel">
+              <div class="panel-h" id="ledger-detail-panel-h">单笔流水 · 新建 · 发生日期默认今日</div>
+              <div class="panel-body">
+                <div class="ledger-detail-grid ledger-detail-grid--form">
+                  <span class="field-label">金额</span>
+                  <input id="ledger-f-amount" class="field-control" type="number" step="0.01" inputmode="decimal" placeholder="0.00" />
+                  <span class="field-label">币种</span>
+                  <div>
+                    <select id="ledger-f-currency" class="field-control" aria-label="币种">
+                      <option value="cny" selected>人民币（CNY）</option>
+                      <option value="jpy">日元（JPY）</option>
+                    </select>
+                    <p class="ledger-field-note">仅支持人民币与日元。</p>
+                  </div>
+                  <span class="field-label">收支</span>
+                  <select id="ledger-f-direction" class="field-control" aria-label="收支">
+                    <option value="out" selected>支出</option>
+                    <option value="in">收入</option>
+                  </select>
+                  <span class="field-label">分类</span>
+                  <div>
+                    <select id="ledger-f-category" class="field-control" aria-label="分类">
+                      <option value="">未分类</option>
+                      <option value="ex1餐饮">餐饮（示例）</option>
+                      <option value="ex2交通">交通（示例）</option>
+                    </select>
+                    <p class="ledger-field-note">分类在「设置」中维护。</p>
+                  </div>
+                  <span class="field-label">发生日期</span>
+                  <div>
+                    <input id="ledger-tx-date" class="field-control" type="date" aria-label="发生日期" />
+                    <p id="ledger-date-hint" class="ledger-field-note">新建流水时默认填入当天日期。</p>
+                  </div>
+                  <span class="field-label">备注</span>
+                  <textarea id="ledger-f-note" class="field-control" placeholder="选填"></textarea>
+                  <div class="ledger-detail-actions">
+                    <button type="button" class="btn" id="ledger-form-save">保存</button>
+                    <button type="button" class="btn" id="ledger-form-cancel">取消</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="notes">
+          <div class="layout-notes">
+            <div class="panel tree">
+              <div class="panel-h">文件夹 / 笔记本</div>
+              <div class="panel-body">
+                <div class="placeholder">层级树 · 置顶排序</div>
+              </div>
+            </div>
+            <div class="panel note-list">
+              <div class="panel-h">笔记列表 · 最近编辑</div>
+              <div class="panel-body">
+                <div class="placeholder">多笔记标题列表</div>
+              </div>
+            </div>
+            <div class="panel note-editor">
+              <div class="panel-h">编辑器 · 标题 / 正文 · 标签 · 附件占位</div>
+              <div class="panel-body">
+                <div class="placeholder title">标题</div>
+                <div class="placeholder body">正文 · 可链日记/账目（扩展）</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="schedule">
+          <div class="layout-schedule">
+            <div class="panel schedule-list">
+              <div class="panel-h">列表视图 · 标题 / 详情 / 起止 / 全天 / 提醒 / 重复（无+按周…）</div>
+              <div class="panel-body">
+                <div class="row head">
+                  <span>事项</span>
+                  <span>时间</span>
+                  <span>提醒</span>
+                  <span>重复</span>
+                </div>
+                <div class="row">
+                  <span class="placeholder" style="border:none;padding:0;">示例事项标题</span>
+                  <span>—</span>
+                  <span>系统通知</span>
+                  <span>无</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h">日历（增强 · 可选）</div>
+              <div class="panel-body">
+                <div class="placeholder" style="min-height:200px;">月历 / 周历 占位</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-view" data-view="settings">
+          <div class="settings-page">
+            <div class="panel">
+              <div class="panel-h">通用</div>
+              <div class="panel-body settings-panel-body--flush">
+                <div class="setting-row"><span>外观（浅 / 深）</span><span class="placeholder" style="width:120px;text-align:center;">切换</span></div>
+                <div class="setting-row"><span>数据目录</span><span class="placeholder" style="width:120px;text-align:center;">待接入</span></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h">记账 · 自定义分类</div>
+              <div class="panel-body settings-categories-body">
+                <p class="ledger-field-note settings-categories-intro">在此添加或删除分类；与实现的「记账 / 设置」一致时数据落 SQLite，本原型仍为会话内示意。</p>
+                <div class="category-editor-toolbar">
+                  <input type="text" id="settings-category-input" class="field-control category-input" placeholder="输入新分类名称" maxlength="32" autocomplete="off" />
+                  <button type="button" class="btn" id="settings-category-add">添加</button>
+                </div>
+                <ul id="settings-category-list" class="category-list" aria-label="已保存的分类列表"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="shell-header.js"></script>
+  <script src="common.js"></script>
+  <script>
+    (function () {
+      var done = false;
+
+      function formatCny(n) {
+        return new Intl.NumberFormat("zh-CN", {
+          style: "currency",
+          currency: "CNY",
+          maximumFractionDigits: n % 1 === 0 ? 0 : 2,
+        }).format(n);
+      }
+
+      function formatCnyAxis(n) {
+        if (n >= 1e4) return "¥" + (n / 1e4).toFixed(n % 1e4 === 0 ? 0 : 1) + "万";
+        if (n >= 1e3) return "¥" + (n / 1e3).toFixed(n % 1e3 === 0 ? 0 : 1) + "k";
+        return "¥" + Math.round(n);
+      }
+
+      function sumArr(a) {
+        return a.reduce(function (s, x) {
+          return s + x;
+        }, 0);
+      }
+
+      window.initLedgerChartsIfNeeded = function () {
+        if (done || typeof Chart === "undefined") return;
+        done = true;
+        Chart.defaults.font.family = 'system-ui, "Segoe UI", "Microsoft YaHei", sans-serif';
+        Chart.defaults.color = "#444";
+
+        var dailyLabels = ["5/10", "5/11", "5/12", "5/13", "5/14", "5/15", "5/16"];
+        var dailySpend = [120, 85, 200, 45, 160, 310, 95];
+        var sumOut = sumArr(dailySpend);
+        new Chart(document.getElementById("chart-daily-spend"), {
+          type: "line",
+          data: {
+            labels: dailyLabels,
+            datasets: [
+              {
+                label: "支出",
+                data: dailySpend,
+                borderColor: "rgb(220, 90, 90)",
+                backgroundColor: "rgba(220, 90, 90, 0.08)",
+                fill: true,
+                tension: 0.25,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                align: "start",
+                text: "近 7 日 · 按日支出（示意 · 当前币种口径）",
+                font: { size: 13, weight: "600" },
+                padding: { bottom: 4 },
+              },
+              subtitle: {
+                display: true,
+                align: "start",
+                text:
+                  "支出合计 " +
+                  formatCny(sumOut) +
+                  " · 共 7 个自然日",
+                color: "#666",
+                font: { size: 11 },
+                padding: { bottom: 8 },
+              },
+              tooltip: {
+                callbacks: {
+                  title: function (items) {
+                    return items.length ? "日期 " + items[0].label : "";
+                  },
+                  label: function (ctx) {
+                    var v = ctx.parsed.y;
+                    if (v == null) return ctx.dataset.label;
+                    return " " + ctx.dataset.label + "：" + formatCny(v);
+                  },
+                  footer: function (items) {
+                    if (!items.length) return "";
+                    var idx = items[0].dataIndex;
+                    var o = dailySpend[idx] || 0;
+                    var prevO = idx > 0 ? dailySpend[idx - 1] : null;
+                    if (prevO != null && prevO !== 0) {
+                      return ["支出环比：" + (((o - prevO) / prevO) * 100).toFixed(1) + "%"];
+                    }
+                    return [];
+                  },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "金额" },
+                ticks: {
+                  callback: function (v) {
+                    return formatCnyAxis(v);
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        var top5Labels = ["餐饮", "交通", "购物", "娱乐", "日用"];
+        var top5Values = [3200, 1800, 1200, 900, 650];
+        var top5Counts = [42, 28, 15, 12, 20];
+        var top5Sum = sumArr(top5Values);
+        var barInnerLabelPlugin = {
+          id: "barInnerLabels",
+          /** 横向柱条内侧右对齐金额；条宽不足时逐级缩小字号 */
+          afterDatasetsDraw: function (chart) {
+            var opts = chart.options || {};
+            if (chart.config.type !== "bar" || opts.indexAxis !== "y") return;
+            var ctx = chart.ctx;
+            var ds = chart.data.datasets[0];
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data) return;
+            meta.data.forEach(function (bar, i) {
+              var value = Number(ds.data[i]);
+              if (value == null || isNaN(value)) return;
+              var x0 = bar.base;
+              var x1 = bar.x;
+              if (x0 == null || x1 == null || isNaN(x0) || isNaN(x1)) return;
+              var left = Math.min(x0, x1);
+              var right = Math.max(x0, x1);
+              var barW = right - left;
+              if (barW < 4) return;
+              var cy = bar.y;
+              var text = formatCny(value);
+              var pad = 8;
+              var fontSize = 12;
+              var tw;
+              ctx.save();
+              for (;;) {
+                ctx.font =
+                  "600 " +
+                  fontSize +
+                  'px system-ui, "Segoe UI", "Microsoft YaHei", sans-serif';
+                tw = ctx.measureText(text).width;
+                if (tw + pad <= barW || fontSize <= 9) break;
+                fontSize -= 1;
+              }
+              if (tw + pad > barW) {
+                ctx.restore();
+                return;
+              }
+              ctx.textAlign = "right";
+              ctx.textBaseline = "middle";
+              ctx.lineJoin = "round";
+              ctx.lineWidth = 3;
+              ctx.strokeStyle = "rgba(255,255,255,0.92)";
+              ctx.fillStyle = "#1a1a1a";
+              var tx = right - pad;
+              ctx.strokeText(text, tx, cy);
+              ctx.fillText(text, tx, cy);
+              ctx.restore();
+            });
+          },
+        };
+        new Chart(document.getElementById("chart-top5-bar"), {
+          type: "bar",
+          plugins: [barInnerLabelPlugin],
+          data: {
+            labels: top5Labels,
+            datasets: [{
+              label: "支出合计（示例）",
+              data: top5Values,
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.75)",
+                "rgba(54, 162, 235, 0.75)",
+                "rgba(255, 206, 86, 0.85)",
+                "rgba(75, 192, 192, 0.75)",
+                "rgba(153, 102, 255, 0.75)",
+              ],
+              borderWidth: 0,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                align: "start",
+                text: "分类排行 · Top5 支出",
+                font: { size: 13, weight: "600" },
+                padding: { bottom: 2 },
+              },
+              subtitle: {
+                display: true,
+                align: "start",
+                text:
+                  "榜内合计 " +
+                  formatCny(top5Sum) +
+                  " · 示意笔数合计 " +
+                  top5Counts.reduce(function (a, b) {
+                    return a + b;
+                  }, 0) +
+                  " 笔",
+                color: "#666",
+                font: { size: 11 },
+                padding: { bottom: 8 },
+              },
+              tooltip: {
+                callbacks: {
+                  title: function (items) {
+                    if (!items.length) return "";
+                    var rank = items[0].dataIndex + 1;
+                    return "第 " + rank + " 名 · " + items[0].label;
+                  },
+                  label: function (ctx) {
+                    var v = ctx.raw;
+                    var share = top5Sum ? ((v / top5Sum) * 100).toFixed(1) : "0";
+                    return " 金额：" + formatCny(v) + "（占本榜 " + share + "%）";
+                  },
+                  afterLabel: function (ctx) {
+                    var v = ctx.raw;
+                    var n = top5Counts[ctx.dataIndex];
+                    var avg = n ? v / n : 0;
+                    return [
+                      "示意笔数：" + n + " 笔",
+                      "笔均：" + formatCny(avg),
+                    ];
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                title: { display: true, text: "金额" },
+                ticks: {
+                  callback: function (v) {
+                    return formatCnyAxis(v);
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        var pieLabels = ["餐饮", "交通", "购物", "娱乐", "其他"];
+        var pieAmounts = [8750, 5500, 4500, 3750, 2500];
+        var pieTotal = sumArr(pieAmounts);
+        var pieInnerLabelPlugin = {
+          id: "pieInnerLabels",
+          afterDatasetsDraw: function (chart) {
+            if (chart.config.type !== "pie") return;
+            var ctx = chart.ctx;
+            var ds = chart.data.datasets[0];
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data || !meta.data.length) return;
+            meta.data.forEach(function (arc, i) {
+              var value = Number(ds.data[i]);
+              if (!value || !pieTotal) return;
+              var share = value / pieTotal;
+              if (share < 0.04) return;
+              var pos = arc.tooltipPosition();
+              var lineAmount = formatCny(value);
+              var linePct = (share * 100).toFixed(1) + "%";
+              ctx.save();
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.lineJoin = "round";
+              var yAmt = pos.y - 8;
+              var yPct = pos.y + 8;
+              ctx.font = '600 11px system-ui, "Segoe UI", "Microsoft YaHei", sans-serif';
+              ctx.lineWidth = 3;
+              ctx.strokeStyle = "rgba(255,255,255,0.92)";
+              ctx.fillStyle = "#1a1a1a";
+              ctx.strokeText(lineAmount, pos.x, yAmt);
+              ctx.fillText(lineAmount, pos.x, yAmt);
+              ctx.font = '500 10px system-ui, "Segoe UI", "Microsoft YaHei", sans-serif';
+              ctx.strokeText(linePct, pos.x, yPct);
+              ctx.fillText(linePct, pos.x, yPct);
+              ctx.restore();
+            });
+          },
+        };
+        new Chart(document.getElementById("chart-category-pie"), {
+          type: "pie",
+          plugins: [pieInnerLabelPlugin],
+          data: {
+            labels: pieLabels,
+            datasets: [{
+              data: pieAmounts,
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.85)",
+                "rgba(54, 162, 235, 0.85)",
+                "rgba(255, 206, 86, 0.9)",
+                "rgba(75, 192, 192, 0.85)",
+                "rgba(201, 203, 207, 0.9)",
+              ],
+              borderWidth: 1,
+              borderColor: "#fff",
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                align: "start",
+                text: "支出结构 · 分类占比（按金额）",
+                font: { size: 13, weight: "600" },
+                padding: { bottom: 2 },
+              },
+              subtitle: {
+                display: true,
+                align: "start",
+                text: "分类支出合计 " + formatCny(pieTotal) + " · " + pieLabels.length + " 个分类",
+                color: "#666",
+                font: { size: 11 },
+                padding: { bottom: 4 },
+              },
+              legend: { position: "right" },
+              tooltip: {
+                callbacks: {
+                  title: function (items) {
+                    return items.length ? items[0].label : "";
+                  },
+                  label: function (ctx) {
+                    var raw = ctx.raw;
+                    var pct = pieTotal ? ((raw / pieTotal) * 100).toFixed(1) : "0";
+                    return " " + formatCny(raw) + "（占合计 " + pct + "%）";
+                  },
+                },
+              },
+            },
+          },
+        });
+      };
+    })();
+  </script>
+</body>
+</html>
